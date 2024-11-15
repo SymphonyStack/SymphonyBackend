@@ -1,6 +1,9 @@
-import { NodeVM } from "vm2";
-import supabase from "../supabaseClient";
-import { createClient } from "@supabase/supabase-js";
+import { NodeVM, VMScript } from "vm2";
+import fs from "fs/promises";
+import path from "path";
+
+// Ensure __dirname points to the directory of index.ts
+const baseDir = path.resolve(__dirname, "../../");
 
 export async function execute(metadata: any) {
   const steps: any[] = metadata.steps;
@@ -14,23 +17,17 @@ export async function execute(metadata: any) {
   return currentInput;
 }
 
-export async function executeLocalFile(fileName: string, payload: any) {
+export async function executeLocalFile(filePath: string, payload: any) {
   try {
-    // Fetch the file from Supabase Storage
-    const supabase = createClient(
-      process.env.SUPABASE_URL as string,
-      process.env.SUPABASE_KEY as string
-    );
-    const { data, error } = await supabase.storage
-      .from("blocks")
-      .download(fileName);
-
-    if (error) {
-      throw error;
-    }
+    // Resolve the file path relative to the base directory
+    const resolvedPath = path.resolve(baseDir, filePath);
 
     // Read the file content
-    const fileContent = await data.text();
+    const fileContent = await fs.readFile(resolvedPath, "utf-8");
+    console.log("File content:", fileContent);
+
+    // Create a script from the file content
+    const script = new VMScript(fileContent, resolvedPath);
 
     // Execute the file content using NodeVM
     const vm = new NodeVM({
@@ -39,17 +36,24 @@ export async function executeLocalFile(fileName: string, payload: any) {
       require: {
         external: true,
         builtin: ["*"],
+        root: baseDir,
       },
     });
 
-    // Load the script and execute the run function
-    const script = vm.run(fileContent, fileName);
-    const result = script.run();
+    // Run the script in the VM
+    const scriptModule = vm.run(script);
+    console.log("Script module:", scriptModule);
+
+    // if (!scriptModule || typeof scriptModule.run !== "function") {
+    //   throw new Error(`The script does not export a 'run' function`);
+    // }
+
+    const result = scriptModule.run(payload);
 
     console.log("Local function executed successfully", result);
     return result;
   } catch (error) {
-    console.error(`Error executing local file ${fileName}:`, error);
+    console.error(`Error executing local file ${filePath}:`, error);
     throw error;
   }
 }

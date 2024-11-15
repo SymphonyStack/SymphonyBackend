@@ -64,11 +64,11 @@ app.use("/job_status", jobStatusRouter);
 //              start server
 // ========================================
 
-import { executeLocalFile } from "./drivers/consumerLocal";
+import { cloneAndRun } from "./drivers/fullpull";
 app.get("/driver", async (req, res) => {
-  const response = await executeLocalFile("index.js", {});
+  const response = await cloneAndRun();
   console.log("Edge function response:", response);
-  return res.status(500);
+  return res.status(500).send({ message: "Error executing edge function" });
 });
 
 const port = process.env.PORT || 8081;
