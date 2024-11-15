@@ -4,7 +4,10 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "compile": "tsc",
+        "dev": "cross-env NODE_ENV=development nodemon -r dotenv/config src/index.ts",
+        "prod": "cross-env NODE_ENV=production nodemon -r dotenv/config src/index.ts"
     },
     "keywords": [],
     "author": "",
@@ -12,6 +15,7 @@
     "dependencies": {
         "@supabase/supabase-js": "^2.46.1",
         "@types/node": "^20.6.0",
+        "aws-sdk": "^2.1692.0",
         "axios": "^1.6.8",
         "bcryptjs": "^2.4.3",
         "body-parser": "^1.19.0",
@@ -23,6 +27,7 @@
         "lodash": "^4.17.21",
         "node-fetch": "^2.7.0",
         "nodemailer": "^6.8.0",
+        "vm2": "^3.9.19",
         "winston": "^3.8.2",
         "zod": "^3.19.1"
     },
