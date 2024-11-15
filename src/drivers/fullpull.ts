@@ -4,6 +4,8 @@ import { exec as execCallback } from "child_process";
 import path from "path";
 import fs from "fs/promises";
 import rimraf from "rimraf";
+import { Flow } from "models";
+import { getBlockService } from "../services";
 
 const exec = promisify(execCallback);
 const git = simpleGit();
@@ -53,22 +55,41 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
   }
 }
 
-export async function runFlow(metadata: any) {
+export async function runFlow(flow: Flow) {
   try {
-    const steps: any[] = metadata.steps;
-
-    let currentInput = {};
-    const context = metadata.context;
-
-    for (const step of steps) {
-      currentInput = await cloneAndRun(
-        step.functionName,
-        currentInput,
-        context
+    const block_sequence = flow.block_sequence;
+    let inputs = flow.block_params;
+    const context = {};
+    for (let i = 0; i < block_sequence.length; i++) {
+      const block_id = block_sequence[i];
+      let input = inputs[i];
+      const block_response = await getBlockService(block_id.toString());
+      if (block_response.status != 200) {
+        console.log(block_response);
+        return {
+          status: block_response.status,
+          data: "Something went wrong while fetching data",
+        };
+      }
+      const output = await cloneAndRun(
+        block_response.data[0].vcs_path,
+        input,
+        context,
       );
+      if (output.status != 200) {
+        console.log(output);
+        return {
+          status: output.status,
+          data: "Something went wrong while cloning and running.",
+        };
+      }
+      input = output.message;
     }
-
-    return currentInput;
+    return {
+      status: 200,
+      // TODO: change this
+      data: "Success",
+    };
   } catch (error) {
     console.error(`Error: ${error}`);
     return { status: 500, error };
