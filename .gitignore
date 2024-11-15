@@ -1,0 +1,24 @@
+/node_modules
+package-lock.json
+config.js
+jwtKey.js
+.env
+/release
+/.DS_Store
+/package-lock.json
+? ignore all the .env and event.json files in /.lambda
+
+/.lambda/*/event.json
+/.lambda/*/.env
+/.lambda/*/node_modules
+/.lambda/*/package-lock.json
+
+static
+test.csv
+test2.csv
+
+/.env*
+/.vscode
+
+getRoutes.py
+routes.json
