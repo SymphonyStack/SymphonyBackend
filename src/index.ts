@@ -65,6 +65,13 @@ app.use("/job_status", jobStatus);
 //              start server
 // ========================================
 
+import { executeLocalFile } from "./drivers/consumerLocal";
+app.get("/driver", async (req, res) => {
+  const response = await executeLocalFile("index.js", {});
+  console.log("Edge function response:", response);
+  return res.status(500);
+});
+
 const port = process.env.PORT || 8081;
 
 try {
