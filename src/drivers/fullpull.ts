@@ -5,7 +5,7 @@ import path from "path";
 import fs from "fs/promises";
 import rimraf from "rimraf";
 import { Flow } from "models";
-import { getBlockService } from "../services";
+import { getBlockService, updateJobStatusService } from "../services";
 
 const exec = promisify(execCallback);
 const git = simpleGit();
@@ -55,7 +55,7 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
   }
 }
 
-export async function runFlow(flow: Flow) {
+export async function runFlow(flow: Flow, job_id: string) {
   try {
     const block_sequence = flow.block_sequence;
     let inputs = flow.block_params;
@@ -85,6 +85,7 @@ export async function runFlow(flow: Flow) {
       }
       input = output.message;
     }
+    updateJobStatusService(job_id, { flow_id: flow.id, status: "SUCCESS" });
     return {
       status: 200,
       // TODO: change this
