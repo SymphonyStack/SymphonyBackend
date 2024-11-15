@@ -3,9 +3,9 @@ import { z } from "zod";
 export const FlowSchema = z.object({
   id: z.number(),
   name: z.string(),
-  description: z.string(),
-  trigger_type: z.string(),
-  trigger_condition: z.string(),
+  description: z.string().optional(),
+  trigger_type: z.string().optional(),
+  trigger_condition: z.string().optional(),
   block_sequence: z.array(z.number()),
   block_params: z.array(z.any()),
   created_by: z.string(),

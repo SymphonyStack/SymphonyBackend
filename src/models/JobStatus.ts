@@ -3,9 +3,9 @@ import { z } from "zod";
 export const JobStatusSchema = z.object({
   id: z.number(),
   flow_id: z.number(),
-  created_at: z.string(),
-  status: z.string(),
-  details: z.string(),
+  created_at: z.string().optional(),
+  status: z.string().optional(),
+  details: z.string().optional(),
 });
 
 export type JobStatus = z.infer<typeof JobStatusSchema>;

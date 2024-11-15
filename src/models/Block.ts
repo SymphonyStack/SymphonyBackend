@@ -2,15 +2,15 @@ import { z } from "zod";
 
 export const BlockSchema = z.object({
   id: z.number(),
-  created_at: z.string(),
+  created_at: z.string().optional(),
   created_by: z
     .string()
     .min(1, { message: "Cannot have empty address of user." }),
   name: z.string(),
-  description: z.string(),
+  description: z.string().optional(),
   location: z.string(),
   vcs_path: z.string(),
-  params: z.any(),
+  params: z.any().optional(),
 });
 
 export type Block = z.infer<typeof BlockSchema>;
