@@ -15,7 +15,6 @@ export const createBlockController = async (
 ): Promise<Result<Block[] | string>> => {
   try {
     let input = req.body;
-    console.log(input);
     const block = createBlock(input) as Block;
     return await createBlockService(block);
   } catch (e: any) {
@@ -28,7 +27,7 @@ export const getBlockController = async (
 ): Promise<Result<Block[] | string>> => {
   try {
     const block_id: string = req.params?.id;
-    if (!block_id || block_id.length == 0 || !isNaN(+block_id)) {
+    if (!block_id || block_id.length == 0 || isNaN(+block_id)) {
       throw Error("No/Invalid block_id found. block_id:" + block_id);
     }
 
@@ -38,7 +37,6 @@ export const getBlockController = async (
     // if (!(typeOfAuthorization && accessToken)) {
     //   return { status: 400, data: "No access token found" };
     // }
-
     return await getBlockService(block_id);
   } catch (e: any) {
     return { status: 400, data: e };

@@ -29,7 +29,7 @@ export const getFlowController = async (
 ): Promise<Result<Flow[] | string>> => {
   try {
     const flow_id: string = req.params?.id;
-    if (!flow_id || flow_id.length == 0 || !isNaN(+flow_id)) {
+    if (!flow_id || flow_id.length == 0 || isNaN(+flow_id)) {
       throw Error("No/Invalid flow_id found. flow_id:" + flow_id);
     }
 

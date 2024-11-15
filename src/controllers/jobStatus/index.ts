@@ -27,7 +27,7 @@ export const getJobStatusController = async (
 ): Promise<Result<JobStatus[] | string>> => {
   try {
     const jobStatus_id: string = req.params?.id;
-    if (!jobStatus_id || jobStatus_id.length == 0 || !isNaN(+jobStatus_id)) {
+    if (!jobStatus_id || jobStatus_id.length == 0 || isNaN(+jobStatus_id)) {
       throw Error(
         "No/Invalid jobStatus_id found. jobStatus_id:" + jobStatus_id,
       );

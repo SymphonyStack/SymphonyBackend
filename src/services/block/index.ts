@@ -10,6 +10,7 @@ export const createBlockService = async (
 
 export const getBlockService = async (id: string): Promise<Result<Block[]>> => {
   const response = await useBlockDbClient.findById(id);
+  console.log(response);
   return { status: response.status, data: response.data };
 };
 
