@@ -10,6 +10,7 @@ export const BlockSchema = z.object({
   description: z.string(),
   location: z.string(),
   vcs_path: z.string(),
+  params: z.any(),
 });
 
 export type Block = z.infer<typeof BlockSchema>;
