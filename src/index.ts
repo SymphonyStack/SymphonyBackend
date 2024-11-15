@@ -1,3 +1,4 @@
+import { block } from "routes";
 /*
 ======================================================
   This is the entry point for the application.
@@ -28,7 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: "*",
-  })
+  }),
 );
 
 // ========================================
@@ -51,6 +52,9 @@ app.use((err: any, _: Request, res: Response, __: any) => {
   console.error(err);
   res.status(err.status || 500).end(err.message);
 });
+
+// @ts-ignore
+app.use("/block", block);
 
 // ========================================
 //              start server
