@@ -5,8 +5,9 @@ import { getFlowService } from "../../services";
 export const executeRouter = express.Router();
 
 executeRouter.post("/", async (req, res) => {
-  const flow_id = req.body.flow_id;
-  const job_id = req.body.job_id;
+  console.log("EXEC body:", req.body);
+  const flow_id = req.body.record.flow_id;
+  const job_id = req.body.record.job_id;
   console.log("STARTING EXECUTION FOR: " + job_id);
   const flow_response = await getFlowService(flow_id);
   if (flow_response.status != 200) {
