@@ -17,9 +17,11 @@ export type Block = z.infer<typeof BlockSchema>;
 
 export const createBlock = (block: Block) => {
   return Object.freeze({
+    created_by: block.created_by,
     name: block.name,
     description: block.description,
     location: block.location,
     vcs_path: block.vcs_path,
+    params: block.params,
   });
 };

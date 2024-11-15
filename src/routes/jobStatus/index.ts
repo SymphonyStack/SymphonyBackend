@@ -1,7 +1,7 @@
-const express = require("express");
-const router = express.router;
+import { Router } from "express";
+export const jobStatusRouter = Router();
 
-import { makeCallback } from "utils";
+import { makeCallback } from "../../utils";
 import {
   createJobStatusController,
   getJobStatusController,
@@ -9,12 +9,15 @@ import {
   updateJobStatusController,
 } from "../../controllers";
 
-router.post("/", makeCallback(createJobStatusController));
+jobStatusRouter.post("/", makeCallback(createJobStatusController));
 
-router.get("/:id", makeCallback(getJobStatusController));
+jobStatusRouter.get("/:id", makeCallback(getJobStatusController));
 
-router.get("/status/:status", makeCallback(getJobStatusesByStatusController));
+jobStatusRouter.get(
+  "/status/:status",
+  makeCallback(getJobStatusesByStatusController),
+);
 
-router.patch("/:id", makeCallback(updateJobStatusController));
+jobStatusRouter.patch("/:id", makeCallback(updateJobStatusController));
 
-module.exports = router;
+// module.exports = jobStatusRouter;

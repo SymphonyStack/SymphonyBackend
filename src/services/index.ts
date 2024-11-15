@@ -1,3 +1,3 @@
-export * from "./blockService";
-export * from "./flowService";
-export * from "./jobStatusService";
+export * from "./block";
+export * from "./flow";
+export * from "./jobStatus";

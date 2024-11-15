@@ -17,7 +17,7 @@ if (process.env.NODE_ENV === "development") {
 
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
-import { block, flow, jobStatus } from "routes";
+import { blockRouter, flowRouter, jobStatusRouter } from "../src/routes";
 
 const app: Express = express();
 
@@ -53,13 +53,12 @@ app.use((err: any, _: Request, res: Response, __: any) => {
 });
 
 // @ts-ignore
-app.use("/block", block);
+app.use("/block", blockRouter);
 
 // @ts-ignore
-app.use("/flow", flow);
+app.use("/flow", flowRouter);
 
-// @ts-ignore
-app.use("/job_status", jobStatus);
+app.use("/job_status", jobStatusRouter);
 
 // ========================================
 //              start server

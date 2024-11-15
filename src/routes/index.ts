@@ -1,3 +1,3 @@
-export * as block from "./block";
-export * as flow from "./flow";
-export * as jobStatus from "./jobStatus";
+export { blockRouter } from "./block";
+export { flowRouter } from "./flow";
+export { jobStatusRouter } from "./jobStatus";

@@ -54,6 +54,7 @@ export const useBlockDb = (getDbClient: Function) => {
   ): Promise<Result<Block[]>> {
     try {
       const clientInstance = await getDbClient();
+      console.log("HEH", block);
       const response = await clientInstance
         .from("Block")
         .insert(block)

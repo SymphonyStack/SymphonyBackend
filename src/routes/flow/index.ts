@@ -1,7 +1,7 @@
-const express = require("express");
-const router = express.router;
+import express from "express";
+export const flowRouter = express.Router();
 
-import { makeCallback } from "utils";
+import { makeCallback } from "../../utils";
 import {
   createFlowController,
   getFlowController,
@@ -11,19 +11,19 @@ import {
   deleteFlowController,
 } from "../../controllers";
 
-router.post("/", makeCallback(createFlowController));
+flowRouter.post("/", makeCallback(createFlowController));
 
-router.get("/:id", makeCallback(getFlowController));
+flowRouter.get("/:id", makeCallback(getFlowController));
 
-router.get("/", makeCallback(getAllFlowsController));
+flowRouter.get("/", makeCallback(getAllFlowsController));
 
-router.get(
+flowRouter.get(
   "/creator/:creator_address",
   makeCallback(getFlowsByCreatorController),
 );
 
-router.patch("/:id", makeCallback(updateFlowController));
+flowRouter.patch("/:id", makeCallback(updateFlowController));
 
-router.delete("/:id", makeCallback(deleteFlowController));
+flowRouter.delete("/:id", makeCallback(deleteFlowController));
 
-module.exports = router;
+// module.exports = flowRouter;
