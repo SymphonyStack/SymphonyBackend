@@ -17,7 +17,12 @@ if (process.env.NODE_ENV === "development") {
 
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
-import { blockRouter, flowRouter, jobStatusRouter } from "../src/routes";
+import {
+  blockRouter,
+  executeRouter,
+  flowRouter,
+  jobStatusRouter,
+} from "../src/routes";
 
 const app: Express = express();
 
@@ -52,24 +57,14 @@ app.use((err: any, _: Request, res: Response, __: any) => {
   res.status(err.status || 500).end(err.message);
 });
 
-// @ts-ignore
 app.use("/block", blockRouter);
-
-// @ts-ignore
 app.use("/flow", flowRouter);
-
 app.use("/job_status", jobStatusRouter);
+app.use("/execute", executeRouter);
 
 // ========================================
 //              start server
 // ========================================
-
-import { cloneAndRun } from "./drivers/fullpull";
-app.get("/driver", async (req, res) => {
-  const response = await cloneAndRun();
-  console.log("Edge function response:", response);
-  return res.status(500).send({ message: "Error executing edge function" });
-});
 
 const port = process.env.PORT || 8081;
 
