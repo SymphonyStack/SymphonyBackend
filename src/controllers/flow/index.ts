@@ -7,12 +7,13 @@ import {
   updateFlowService,
   deleteFlowService,
 } from "../../services";
+import { Request } from "express";
 
 import dotenv from "dotenv";
 dotenv.config();
 
 export const createFlowController = async (
-  req: any,
+  req: Request,
 ): Promise<Result<Flow[] | string>> => {
   try {
     let input = req.body;
@@ -24,7 +25,7 @@ export const createFlowController = async (
 };
 
 export const getFlowController = async (
-  req: any,
+  req: Request,
 ): Promise<Result<Flow[] | string>> => {
   try {
     const flow_id: string = req.params?.id;
@@ -46,7 +47,7 @@ export const getFlowController = async (
 };
 
 export const getFlowsByCreatorController = async (
-  req: any,
+  req: Request,
 ): Promise<Result<Flow[] | string>> => {
   try {
     const creator_address: string = req.params?.creator_address;
@@ -69,7 +70,7 @@ export const getFlowsByCreatorController = async (
 };
 
 export const getAllFlowsController = async (
-  req: any,
+  req: Request,
 ): Promise<Result<Flow[] | string>> => {
   try {
     // TODO: remove this
@@ -88,7 +89,7 @@ export const getAllFlowsController = async (
 };
 
 export const deleteFlowController = async (
-  req: any,
+  req: Request,
 ): Promise<Result<string>> => {
   try {
     const flow_id = req.params.id;
@@ -107,7 +108,7 @@ export const deleteFlowController = async (
 };
 
 export const updateFlowController = async (
-  req: any,
+  req: Request,
 ): Promise<Result<Flow[] | string>> => {
   try {
     const flow_id = req.params.id;

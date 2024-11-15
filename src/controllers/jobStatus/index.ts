@@ -5,12 +5,13 @@ import {
   getJobStatusService,
   updateJobStatusService,
 } from "../../services";
+import { Request } from "express";
 
 import dotenv from "dotenv";
 dotenv.config();
 
 export const createJobStatusController = async (
-  req: any,
+  req: Request,
 ): Promise<Result<JobStatus[] | string>> => {
   try {
     let input = req.body;
@@ -22,7 +23,7 @@ export const createJobStatusController = async (
 };
 
 export const getJobStatusController = async (
-  req: any,
+  req: Request,
 ): Promise<Result<JobStatus[] | string>> => {
   try {
     const jobStatus_id: string = req.params?.id;
@@ -46,7 +47,7 @@ export const getJobStatusController = async (
 };
 
 export const getJobStatusesByStatusController = async (
-  req: any,
+  req: Request,
 ): Promise<Result<JobStatus[] | string>> => {
   try {
     const status: string = req.params?.status;
@@ -67,7 +68,7 @@ export const getJobStatusesByStatusController = async (
 };
 
 export const updateJobStatusController = async (
-  req: any,
+  req: Request,
 ): Promise<Result<JobStatus[] | string>> => {
   try {
     const job_status_id = req.params.id;

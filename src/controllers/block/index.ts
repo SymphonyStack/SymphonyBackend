@@ -5,12 +5,13 @@ import {
   getBlockByCreatorService,
   getBlockService,
 } from "../../services";
+import { Request } from "express";
 
 import dotenv from "dotenv";
 dotenv.config();
 
 export const createBlockController = async (
-  req: any,
+  req: Request,
 ): Promise<Result<Block[] | string>> => {
   try {
     let input = req.body;
@@ -22,7 +23,7 @@ export const createBlockController = async (
 };
 
 export const getBlockController = async (
-  req: any,
+  req: Request,
 ): Promise<Result<Block[] | string>> => {
   try {
     const block_id: string = req.params?.id;
@@ -44,7 +45,7 @@ export const getBlockController = async (
 };
 
 export const getBlocksByCreatorController = async (
-  req: any,
+  req: Request,
 ): Promise<Result<Block[] | string>> => {
   try {
     const creator_address: string = req.params?.creator_address;
@@ -67,7 +68,7 @@ export const getBlocksByCreatorController = async (
 };
 
 export const getAllBlocksController = async (
-  req: any,
+  req: Request,
 ): Promise<Result<Block[] | string>> => {
   try {
     // TODO: remove this

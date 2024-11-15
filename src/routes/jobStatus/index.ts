@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.router;
 
+import { makeCallback } from "utils";
 import {
   createJobStatusController,
   getJobStatusController,
@@ -8,20 +9,12 @@ import {
   updateJobStatusController,
 } from "../../controllers";
 
-router.post("/", (req: any, res: any) => {
-  res.send(createJobStatusController(req));
-});
+router.post("/", makeCallback(createJobStatusController));
 
-router.get("/:id", (req: any, res: any) => {
-  res.send(getJobStatusController(req));
-});
+router.get("/:id", makeCallback(getJobStatusController));
 
-router.get("/status/:status", (req: any, res: any) => {
-  res.send(getJobStatusesByStatusController(req));
-});
+router.get("/status/:status", makeCallback(getJobStatusesByStatusController));
 
-router.patch("/:id", (req: any, res: any) => {
-  res.send(updateJobStatusController(req));
-});
+router.patch("/:id", makeCallback(updateJobStatusController));
 
 module.exports = router;

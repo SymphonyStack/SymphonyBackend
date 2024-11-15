@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.router;
 
+import { makeCallback } from "utils";
 import {
   getBlockController,
   getBlocksByCreatorController,
@@ -8,20 +9,15 @@ import {
   getAllBlocksController,
 } from "../../controllers";
 
-router.get("/:id", (req: any, res: any) => {
-  res.send(getBlockController(req));
-});
+router.get("/:id", makeCallback(getBlockController));
 
-router.get("/creator/:creator_address", (req: any, res: any) => {
-  res.send(getBlocksByCreatorController(req));
-});
+router.get(
+  "/creator/:creator_address",
+  makeCallback(getBlocksByCreatorController),
+);
 
-router.get("/", (req: any, res: any) => {
-  res.send(getAllBlocksController(req));
-});
+router.get("/", makeCallback(getAllBlocksController));
 
-router.post("/", (req: any, res: any) => {
-  res.send(createBlockController(req));
-});
+router.post("/", makeCallback(createBlockController));
 
 module.exports = router;
