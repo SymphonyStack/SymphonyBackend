@@ -20,7 +20,7 @@ export const createFlow = (flow: Flow) => {
     trigger_type: flow.trigger_type,
     trigger_condition: flow.trigger_condition,
     block_sequence: flow.block_sequence,
-    block_param: flow.block_params,
+    block_params: flow.block_params,
     created_by: flow.created_by,
   });
 };
