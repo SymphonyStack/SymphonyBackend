@@ -47,6 +47,23 @@ export const useFlowDb = (getDbClient: Function) => {
     }
   }
 
+  async function findByCreator(address: string): Promise<Result<Flow[]>> {
+    try {
+      const clientInstance = await getDbClient();
+
+      const response = await clientInstance
+        .from("Flow")
+        .select()
+        .match({ created_by: address });
+      if (response.error) {
+        return { status: response.status, data: response.error.message };
+      }
+      return response;
+    } catch (e: any) {
+      return { status: 400, data: e.message };
+    }
+  }
+
   async function updateFlow(
     id: string,
     flow: Pick<Flow, Exclude<keyof Flow, "id">>,
@@ -86,6 +103,7 @@ export const useFlowDb = (getDbClient: Function) => {
     updateFlow,
     getAll,
     findById,
+    findByCreator,
     deleteFlow,
   });
 };

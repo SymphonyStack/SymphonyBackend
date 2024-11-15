@@ -18,6 +18,13 @@ export const getAllFlowsService = async (): Promise<Result<Flow[]>> => {
   return { status: response.status, data: response.data };
 };
 
+export const getFlowByCreatorService = async (
+  address: string,
+): Promise<Result<Flow[]>> => {
+  const response = await useFlowDbClient.findByCreator(address);
+  return { status: response.status, data: response.data };
+};
+
 export const updateFlowService = async (
   id: string,
   flow: Pick<Flow, Exclude<keyof Flow, "id">>,
