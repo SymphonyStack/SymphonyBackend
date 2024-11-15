@@ -50,11 +50,10 @@ export const getFlowsByCreatorController = async (
   req: Request,
 ): Promise<Result<Flow[] | string>> => {
   try {
-    const creator_address: string = req.params?.creator_address;
-    if (!creator_address || creator_address.length == 0) {
-      throw Error(
-        "No/Invalid creator_address found. creator_address:" + creator_address,
-      );
+    const created_by: string = req.params?.created_by;
+    console.log(created_by);
+    if (!created_by || created_by.length == 0) {
+      throw Error("No/Invalid created_by found. created_by:" + created_by);
     }
     // TODO: check if auth needed for getting Flows
     // const typeOfAuthorization = req.headers.authorization?.split(" ")[0];
@@ -62,8 +61,8 @@ export const getFlowsByCreatorController = async (
     // if (!(typeOfAuthorization && accessToken)) {
     //   return { status: 400, data: "No access token found" };
     // }
-
-    return await getFlowByCreatorService(creator_address);
+    console.log(created_by);
+    return await getFlowByCreatorService(created_by);
   } catch (e: any) {
     return { status: 400, data: e };
   }
@@ -94,13 +93,14 @@ export const deleteFlowController = async (
   try {
     const flow_id = req.params.id;
     const flow = await getFlowService(flow_id);
-    // TODO: find a better way to do this. [ Using auth ]
-    if (flow.data[0].creator_address != req.params.creator_address) {
-      return {
-        status: 404,
-        data: "Current user doesn't own the flow.",
-      };
-    }
+    // // TODO: find a better way to do this. [ Using auth ]
+    // if (flow.data[0].created_by != req.params.created_by) {
+    //   console.log(flow);
+    //   return {
+    //     status: 404,
+    //     data: "Current user doesn't own the flow.",
+    //   };
+    // }
     return await deleteFlowService(flow_id);
   } catch (e: any) {
     return { status: 400, data: e };
@@ -114,7 +114,7 @@ export const updateFlowController = async (
     const flow_id = req.params.id;
     let input = req.body;
     const old_flow = await getFlowService(flow_id);
-    if (input.creator_address != old_flow.data[0].creator_address) {
+    if (input.created_by != old_flow.data[0].created_by) {
       return {
         status: 404,
         data: "Current user doesn't own the flow.",

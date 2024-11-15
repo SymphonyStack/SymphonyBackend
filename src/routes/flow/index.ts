@@ -18,7 +18,7 @@ flowRouter.get("/:id", makeCallback(getFlowController));
 flowRouter.get("/", makeCallback(getAllFlowsController));
 
 flowRouter.get(
-  "/creator/:creator_address",
+  "/creator/:created_by",
   makeCallback(getFlowsByCreatorController),
 );
 

@@ -4,6 +4,7 @@ import { useFlowDbClient } from "../../utils/database";
 export const createFlowService = async (
   flow: Pick<Flow, Exclude<keyof Flow, "id">>,
 ): Promise<Result<Flow[]>> => {
+  console.log("FLow", flow);
   const response = await useFlowDbClient.insertFlow(flow);
   return { status: response.status, data: response.data };
 };
