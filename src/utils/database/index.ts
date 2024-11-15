@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { useBlockDb } from "./block";
+import { useFlowDb } from "./flow";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -16,3 +17,4 @@ export const createDbClient = () => {
 };
 
 export const useBlockDbClient = useBlockDb(createDbClient);
+export const useFlowDbClient = useFlowDb(createDbClient);
