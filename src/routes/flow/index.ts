@@ -22,7 +22,7 @@ router.get("/", (req: any, res: any) => {
   res.send(getAllFlowsController(req));
 });
 
-router.get("/creator/:id", (req: any, res: any) => {
+router.get("/creator/:creator_address", (req: any, res: any) => {
   res.send(getFlowsByCreatorController(req));
 });
 

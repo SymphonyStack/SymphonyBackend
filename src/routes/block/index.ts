@@ -12,16 +12,16 @@ router.get("/:id", (req: any, res: any) => {
   res.send(getBlockController(req));
 });
 
+router.get("/creator/:creator_address", (req: any, res: any) => {
+  res.send(getBlocksByCreatorController(req));
+});
+
 router.get("/", (req: any, res: any) => {
   res.send(getAllBlocksController(req));
 });
 
 router.post("/", (req: any, res: any) => {
   res.send(createBlockController(req));
-});
-
-router.get("/creator/:id", (req: any, res: any) => {
-  res.send(getBlocksByCreatorController(req));
 });
 
 module.exports = router;

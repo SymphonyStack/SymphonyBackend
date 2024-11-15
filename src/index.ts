@@ -1,12 +1,11 @@
-import { block } from "routes";
 /*
 ======================================================
-  This is the entry point for the application.
-  It is responsible for setting up the application
-  and starting the server.
+This is the entry point for the application.
+It is responsible for setting up the application
+and starting the server.
 
-  Please use #TODO comments to mark areas that need
-  to be changed or improved.
+Please use #TODO comments to mark areas that need
+to be changed or improved.
 
 ======================================================
 */
@@ -18,7 +17,7 @@ if (process.env.NODE_ENV === "development") {
 
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
-import supabase from "./supabaseClient.js";
+import { block, flow, jobStatus } from "routes";
 
 const app: Express = express();
 
@@ -55,6 +54,12 @@ app.use((err: any, _: Request, res: Response, __: any) => {
 
 // @ts-ignore
 app.use("/block", block);
+
+// @ts-ignore
+app.use("/flow", flow);
+
+// @ts-ignore
+app.use("/job_status", jobStatus);
 
 // ========================================
 //              start server
