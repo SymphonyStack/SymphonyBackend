@@ -2,9 +2,9 @@ import { Flow, Result } from "../../models";
 import { useFlowDbClient } from "../../utils/database";
 
 export const createFlowService = async (
-  Flow: Pick<Flow, Exclude<keyof Flow, "id">>,
+  flow: Pick<Flow, Exclude<keyof Flow, "id">>,
 ): Promise<Result<Flow[]>> => {
-  const response = await useFlowDbClient.insertFlow(Flow);
+  const response = await useFlowDbClient.insertFlow(flow);
   return { status: response.status, data: response.data };
 };
 
