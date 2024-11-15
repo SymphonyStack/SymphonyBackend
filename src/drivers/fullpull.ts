@@ -60,6 +60,7 @@ export async function runFlow(flow: Flow, job_id: string) {
     const block_sequence = flow.block_sequence;
     let inputs = flow.block_params;
     const context = {};
+    console.log("RUNNING FLOW:" + flow);
     for (let i = 0; i < block_sequence.length; i++) {
       const block_id = block_sequence[i];
       let input = inputs[i];
@@ -71,6 +72,7 @@ export async function runFlow(flow: Flow, job_id: string) {
           data: "Something went wrong while fetching data",
         };
       }
+      console.log("Block: ", block_response);
       const output = await cloneAndRun(
         block_response.data[0].vcs_path,
         input,
