@@ -16,5 +16,7 @@ executeRouter.post("/", async (req, res) => {
   }
   console.log("FLOW Response: " + flow_response);
   console.log(flow_response.data[0]);
-  runFlow(flow_response.data[0], job_id);
+  const data = await runFlow(flow_response.data[0], job_id);
+  console.log("data from router: ", data);
+  res.status(200).send("Execution completed");
 });

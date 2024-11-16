@@ -5,6 +5,7 @@ import path from "path";
 import fs from "fs/promises";
 import { Flow } from "models";
 import { getBlockService, updateJobStatusService } from "../services";
+import { forEach } from "lodash";
 
 const exec = promisify(execCallback);
 const git = simpleGit();
@@ -50,17 +51,17 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
     // Run npm start
     const values = Object.values(data.args).map((value) => `"${value}"`);
     const resStart = await exec(
-      `${data.startup_script || "npm run dev"} ${values.join(" ")}`
+      `${data.startup_script || "npm run dev"} -- ${values.join(" ")}`
     );
     console.log(`npm start output: ${resStart.stdout}`);
     const modifiedOutput = resStart.stdout.substring(
-      resStart.stdout.indexOf(DELIMITER) + 1,
+      resStart.stdout.indexOf(DELIMITER) + 2,
       resStart.stdout.lastIndexOf(DELIMITER)
     );
 
     //delete the folder
-    await fs.rm(localPath, { recursive: true, force: true });
-    console.log(`Removed directory: ${localPath}`);
+    // await fs.rm(localPath, { recursive: true, force: true });
+    // console.log(`Removed directory: ${localPath}`);
     return { status: 200, message: modifiedOutput };
   } catch (error) {
     console.error(`Error: ${error}`);
@@ -75,8 +76,22 @@ export async function runFlow(flow: Flow, job_id: string) {
     let inputs = flow.block_params;
     console.log("INPUTS:", inputs);
     let context = {};
+    let ordered_input = {};
     for (let i = 0; i < block_sequence.length; i++) {
       const block_id = block_sequence[i];
+
+      const block_response = await getBlockService(block_id.toString());
+      if (block_response.status != 200 || block_response.data.length == 0) {
+        console.log(block_response);
+        return {
+          status: block_response.status,
+          data: "Something went wrong while fetching data",
+        };
+      }
+      console.log(block_response);
+
+      const block_params = block_response.data[0].params;
+
       let input = {};
       if (inputs && i < inputs.length) {
         input = inputs[i];
@@ -95,19 +110,14 @@ export async function runFlow(flow: Flow, job_id: string) {
             }
           }
         }
+        forEach(block_params.input, (param) => {
+          if (input[param.name]) {
+            ordered_input[param.name] = input[param.name];
+          }
+        });
       }
-
-      const block_response = await getBlockService(block_id.toString());
-      if (block_response.status != 200 || block_response.data.length == 0) {
-        console.log(block_response);
-        return {
-          status: block_response.status,
-          data: "Something went wrong while fetching data",
-        };
-      }
-      console.log(block_response);
       const data = {
-        args: input,
+        args: ordered_input,
         startup_script: block_response.data[0].startup_script,
         build_script: block_response.data[0].build_script,
       };
@@ -133,7 +143,9 @@ export async function runFlow(flow: Flow, job_id: string) {
         context = {};
       }
     }
+    console.log("Flow executed successfully.");
     updateJobStatusService(job_id, { flow_id: flow.id, status: "SUCCESS" });
+    console.log("Updated db...");
     return {
       status: 200,
       // TODO: change this
