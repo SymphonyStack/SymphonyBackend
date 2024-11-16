@@ -53,12 +53,16 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
       console.log("Skipping build step ");
     }
     // Run npm start
-    console.log("DATA ARGS TYPE: ", typeof data.args);
-    console.log("DATA ARGS: ", data.args);
-    const values = Object.values(data.args).map((value) => `"${value}"`);
-    const resStart = await exec(
-      `${data.startup_script || "npm run dev"} -- ${values.join(" ")}`
-    );
+    const values = data.args
+      ? Object.values(data.args).map((value) => `"${value}"`)
+      : [];
+
+    console.log("VALUES: ", values);
+    const command = `${data.startup_script || "npm run dev"} -- ${values.join(
+      " "
+    )}`;
+    console.log(`Executing command: ${command}`);
+    const resStart = await exec(command);
     console.log(`npm start output: ${resStart.stdout}`);
     const modifiedOutput = resStart.stdout.substring(
       resStart.stdout.indexOf(DELIMITER) + 2,
@@ -107,16 +111,18 @@ export async function runFlow(flow: Flow, job_id: string) {
           input = context;
         } else if (context) {
           for (let key in input) {
+            console.log("KEY: ", key);
             // Using context replace string keys between {{ and }} with values from context
             const matches = input[key].match(/{{(\w*\s*)*}}/g);
+            console.log("MATCHES: ", matches);
             if (!matches) {
               continue;
             }
             for (let temp of matches) {
-              input[key] = input[key].replaceAll(
-                temp,
-                context[temp.substring(2, temp.length - 2)]
-              );
+              const newKey = temp.substring(2, temp.length - 2).trim();
+              console.log("NEWKEY: ", newKey);
+              console.log("TEMP: ", temp);
+              input[key] = input[key].replaceAll(temp, context[newKey]);
             }
           }
         }
