@@ -11,6 +11,8 @@ export const BlockSchema = z.object({
   location: z.string(),
   vcs_path: z.string(),
   params: z.any().optional(),
+  startup_script: z.string().optional(),
+  build_script: z.string().optional(),
 });
 
 export type Block = z.infer<typeof BlockSchema>;
@@ -23,5 +25,7 @@ export const createBlock = (block: Block) => {
     location: block.location,
     vcs_path: block.vcs_path,
     params: block.params,
+    startup_script: z.string().optional(),
+    build_script: z.string().optional(),
   });
 };
