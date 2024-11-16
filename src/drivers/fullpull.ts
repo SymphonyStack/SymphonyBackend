@@ -55,13 +55,13 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
     );
     console.log(`npm start output: ${resStart.stdout}`);
     const modifiedOutput = resStart.stdout.substring(
-      resStart.stdout.indexOf(DELIMITER) + 1,
+      resStart.stdout.indexOf(DELIMITER) + 2,
       resStart.stdout.lastIndexOf(DELIMITER)
     );
 
     //delete the folder
-    await fs.rm(localPath, { recursive: true, force: true });
-    console.log(`Removed directory: ${localPath}`);
+    // await fs.rm(localPath, { recursive: true, force: true });
+    // console.log(`Removed directory: ${localPath}`);
     return { status: 200, message: modifiedOutput };
   } catch (error) {
     console.error(`Error: ${error}`);
@@ -143,7 +143,9 @@ export async function runFlow(flow: Flow, job_id: string) {
         context = {};
       }
     }
+    console.log("Flow executed successfully.");
     updateJobStatusService(job_id, { flow_id: flow.id, status: "SUCCESS" });
+    console.log("Updated db...");
     return {
       status: 200,
       // TODO: change this
