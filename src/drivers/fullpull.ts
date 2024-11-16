@@ -14,7 +14,6 @@ const reposDir = path.resolve(__dirname, "../../", "repos");
 export async function cloneAndRun(repoUrl: string, data: any, context: any) {
   try {
     console.log("STARTING CLONE");
-    const repoUrl = "https://github.com/SymphonyStack/TestBlock.git"; // Replace with your repository URL
     // Get the repo name from the URL
     const repoName = repoUrl?.split("/")?.pop()?.split(".")[0] as string;
     const localPath = path.resolve(reposDir, repoName);

@@ -68,17 +68,16 @@ app.use("/execute", executeRouter);
 
 import { cloneAndRun } from "./drivers/fullpull";
 app.get("/driver", async (req, res) => {
-  const repoUrl = "https://github.com/SymphonyStack/TestBlock2.git";
+  const repoUrl =
+    "https://github.com/SymphonyStack/message-to-telegram-bot.git";
   const context = {};
   const data = {
     args: [
-      "MyToken",
-      "MTK",
-      "1000000000000",
-      "0xce869b68ed0d21f201bc87ff268e18ba7c485f61bae5c5721e7f4cd6c3af9e13",
+      "8138744738:AAG8E8Ey5mLj-fHryKfOrYekY7K7AYL_tQE",
+      "-1002421881674",
+      "Hello my name is Loca and I am a little pug. I live in Belfast Ireland and my favorite things a hug. I love to eat roast chicken and my friends say I am lot fun but one thing that I cannot do is, I can't heckin run...",
     ],
-    startup_script:
-      "npx hardhat compile && npx hardhat deploy --network mumbai ",
+    startup_script: "node main.js ",
   };
   const response = await cloneAndRun(repoUrl, data, context);
   console.log("Edge function response:", response);
