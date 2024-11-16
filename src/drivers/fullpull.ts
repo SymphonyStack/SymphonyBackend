@@ -44,7 +44,9 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
     const resInstall = await exec("npm install --legacy-peer-deps");
     console.log(`npm install output: ${resInstall.stdout}`);
     // Run npm run build
-    const runRes = await exec(data.build_script || "build script not found");
+    const runRes = await exec(
+      data.build_script || "echo build script not found"
+    );
     console.log(`npm run build output: ${runRes.stdout}`);
     // Run npm start
     const resStart = await exec(data.startup_script);
