@@ -71,8 +71,8 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
     console.log(`MOFIFIED_OUTPUT for ${repoName}: ${modifiedOutput}`);
 
     //delete the folder
-    // await fs.rm(localPath, { recursive: true, force: true });
-    // console.log(`Removed directory: ${localPath}`);
+    await fs.rm(localPath, { recursive: true, force: true });
+    console.log(`Removed directory: ${localPath}`);
     return { status: 200, message: modifiedOutput };
   } catch (error) {
     console.error(`Error: ${error}`);
