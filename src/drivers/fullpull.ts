@@ -53,15 +53,16 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
       console.log("Skipping build step ");
     }
     // Run npm start
-    const values = Object.values(data.args).map(value => `"${value}"`);
+    const values = Object.values(data.args).map((value) => `"${value}"`);
     const resStart = await exec(
-      `${data.startup_script || "npm run dev"} -- ${values.join(" ")}`,
+      `${data.startup_script || "npm run dev"} -- ${values.join(" ")}`
     );
     console.log(`npm start output: ${resStart.stdout}`);
     const modifiedOutput = resStart.stdout.substring(
       resStart.stdout.indexOf(DELIMITER) + 2,
-      resStart.stdout.lastIndexOf(DELIMITER),
+      resStart.stdout.lastIndexOf(DELIMITER)
     );
+    console.log(`MOFIFIED_OUTPUT for ${repoName}: ${modifiedOutput}`);
 
     //delete the folder
     // await fs.rm(localPath, { recursive: true, force: true });
@@ -112,20 +113,24 @@ export async function runFlow(flow: Flow, job_id: string) {
             for (let temp of matches) {
               input[key] = input[key].replaceAll(
                 temp,
-                context[temp.substring(2, temp.length - 2)],
+                context[temp.substring(2, temp.length - 2)]
               );
             }
           }
         }
+        console.log("CONTEXT: ", context);
+        console.log("INPUT: ", input);
+        console.log("BLOCK_PARAMS: ", block_params);
         if (flow.block_params[i].type == "transformer") {
           ordered_input = input;
         } else {
-          forEach(block_params.input, param => {
+          forEach(block_params.input, (param) => {
             if (input[param.name]) {
               ordered_input[param.name] = input[param.name];
             }
           });
         }
+        console.log("ORDERED INPUT: ", ordered_input);
       }
       const data = {
         args: ordered_input,
@@ -135,7 +140,7 @@ export async function runFlow(flow: Flow, job_id: string) {
       const output = await cloneAndRun(
         block_response.data[0].vcs_path,
         data,
-        context,
+        context
       );
       if (output.status != 200) {
         console.log(output);
