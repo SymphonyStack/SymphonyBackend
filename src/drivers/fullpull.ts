@@ -49,7 +49,7 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
     );
     console.log(`npm run build output: ${runRes.stdout}`);
     // Run npm start
-    const resStart = await exec(data.startup_script);
+    const resStart = await exec(data.startup_script || "npm run dev");
     console.log(`npm start output: ${resStart.stdout}`);
     const modifiedOutput = resStart.stdout.substring(
       resStart.stdout.indexOf(DELIMITER) + 1,
