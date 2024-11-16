@@ -15,5 +15,6 @@ executeRouter.post("/", async (req, res) => {
     res.status(flow_response.status).send("Something went wrong");
   }
   console.log("FLOW Response: " + flow_response);
+  console.log(flow_response.data[0]);
   runFlow(flow_response.data[0], job_id);
 });

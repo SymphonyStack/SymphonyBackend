@@ -10,6 +10,7 @@ const exec = promisify(execCallback);
 const git = simpleGit();
 
 const reposDir = path.resolve(__dirname, "../../", "repos");
+const DELIMITER = process.env.DELIMITER ?? "";
 
 export async function cloneAndRun(repoUrl: string, data: any, context: any) {
   try {
@@ -49,7 +50,11 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
     // Run npm start
     const resStart = await exec("npm start");
     console.log(`npm start output: ${resStart.stdout}`);
-    return { status: 200, message: "Edge function executed successfully" };
+    const mySubString = resStart.stdout.substring(
+      resStart.stdout.indexOf(DELIMITER) + 1,
+      resStart.stdout.lastIndexOf(DELIMITER),
+    );
+    return { status: 200, message: mySubString };
   } catch (error) {
     console.error(`Error: ${error}`);
     return { status: 500, error };
@@ -63,9 +68,18 @@ export async function runFlow(flow: Flow, job_id: string) {
     const context = {};
     for (let i = 0; i < block_sequence.length; i++) {
       const block_id = block_sequence[i];
-      let input;
+      let input = {};
       if (inputs && i < inputs.length) {
-        input = inputs[i];
+        if (input) {
+          // Replace default values with the values from prev block
+          const temp = { ...input };
+          input = inputs[i];
+          for (const key in temp) {
+            input[key] = temp[key];
+          }
+        } else {
+          input = inputs[i];
+        }
       }
       const block_response = await getBlockService(block_id.toString());
       if (block_response.status != 200 || block_response.data.length == 0) {
@@ -88,7 +102,12 @@ export async function runFlow(flow: Flow, job_id: string) {
           data: "Something went wrong while cloning and running.",
         };
       }
-      input = output.message;
+      // Output of the current block is the input to the next block
+      if (output.message) {
+        input = JSON.parse(output.message);
+      } else {
+        input = {};
+      }
     }
     updateJobStatusService(job_id, { flow_id: flow.id, status: "SUCCESS" });
     return {
