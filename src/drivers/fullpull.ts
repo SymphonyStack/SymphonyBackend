@@ -94,6 +94,8 @@ export async function runFlow(flow: Flow, job_id: string) {
               );
             }
           }
+        } else {
+          input = inputs[i];
         }
       }
 
