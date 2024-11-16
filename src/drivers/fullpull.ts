@@ -34,8 +34,6 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
       console.log(`Removed existing directory: ${localPath}`);
     }
 
-    const args: any[] = data.args;
-
     // Clone the repository into the repos folder
     await git.clone(repoUrl, localPath);
     console.log("Repository cloned successfully.");
@@ -44,19 +42,19 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
 
     console.log("STARTING INSTALL");
     // Install dependencies
-    const resInstall = await exec("npm install --legacy-peer-deps");
+    const resInstall = await exec("npm install");
     console.log(`npm install output: ${resInstall.stdout}`);
     // Run npm run build
-    const runRes = await exec(`${data.build_script || "echo no build script"}`);
+    const runRes = await exec("npm run build");
     console.log(`npm run build output: ${runRes.stdout}`);
-    // Run npm start if args exist add them to the command
-    const resStart = await exec(data.startup_script + args.join(" "));
+    // Run npm start
+    const resStart = await exec("npm start");
     console.log(`npm start output: ${resStart.stdout}`);
-    const mySubString = resStart.stdout.substring(
+    const modifiedOutput = resStart.stdout.substring(
       resStart.stdout.indexOf(DELIMITER) + 1,
       resStart.stdout.lastIndexOf(DELIMITER),
     );
-    return { status: 200, message: mySubString };
+    return { status: 200, message: modifiedOutput };
   } catch (error) {
     console.error(`Error: ${error}`);
     return { status: 500, error };
@@ -66,23 +64,31 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
 export async function runFlow(flow: Flow, job_id: string) {
   try {
     const block_sequence = flow.block_sequence;
+    // Default params for blocks
     let inputs = flow.block_params;
-    const context = {};
+    let context = {};
     for (let i = 0; i < block_sequence.length; i++) {
       const block_id = block_sequence[i];
       let input = {};
       if (inputs && i < inputs.length) {
-        if (input) {
-          // Replace default values with the values from prev block
-          const temp = { ...input };
-          input = inputs[i];
-          for (const key in temp) {
-            input[key] = temp[key];
+        input = inputs[i].params;
+        if (context) {
+          for (let key in input) {
+            // Using context replace string keys between {{ and }} with values from context
+            const matches = input[key].match(/{{(\w*\s*)*}}/g);
+            if (!matches) {
+              continue;
+            }
+            for (let temp of matches) {
+              input[key] = input[key].replaceAll(
+                temp,
+                context[temp.substring(2, temp.length - 2)],
+              );
+            }
           }
-        } else {
-          input = inputs[i];
         }
       }
+
       const block_response = await getBlockService(block_id.toString());
       if (block_response.status != 200 || block_response.data.length == 0) {
         console.log(block_response);
@@ -95,7 +101,7 @@ export async function runFlow(flow: Flow, job_id: string) {
       const output = await cloneAndRun(
         block_response.data[0].vcs_path,
         input,
-        context
+        context,
       );
       if (output.status != 200) {
         console.log(output);
@@ -106,9 +112,9 @@ export async function runFlow(flow: Flow, job_id: string) {
       }
       // Output of the current block is the input to the next block
       if (output.message) {
-        input = JSON.parse(output.message);
+        context = JSON.parse(output.message);
       } else {
-        input = {};
+        context = {};
       }
     }
     updateJobStatusService(job_id, { flow_id: flow.id, status: "SUCCESS" });
