@@ -117,11 +117,15 @@ export async function runFlow(flow: Flow, job_id: string) {
             }
           }
         }
-        forEach(block_params.input, param => {
-          if (input[param.name]) {
-            ordered_input[param.name] = input[param.name];
-          }
-        });
+        if (flow.block_params[i].type == "transformer") {
+          ordered_input = input;
+        } else {
+          forEach(block_params.input, param => {
+            if (input[param.name]) {
+              ordered_input[param.name] = input[param.name];
+            }
+          });
+        }
       }
       const data = {
         args: ordered_input,
