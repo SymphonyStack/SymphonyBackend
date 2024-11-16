@@ -129,7 +129,11 @@ export async function runFlow(flow: Flow, job_id: string) {
       );
       if (output.status != 200) {
         console.log(output);
-        updateJobStatusService(job_id, { flow_id: flow.id, status: "FAILED" });
+        updateJobStatusService(job_id, {
+          flow_id: flow.id,
+          status: "FAILED",
+          details: output.message,
+        });
         return {
           status: output.status,
           data: "Something went wrong while cloning and running.",
@@ -152,9 +156,13 @@ export async function runFlow(flow: Flow, job_id: string) {
       // TODO: change this
       data: "Success",
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error(`Error: ${error}`);
-    updateJobStatusService(job_id, { flow_id: flow.id, status: "FAILED" });
+    updateJobStatusService(job_id, {
+      flow_id: flow.id,
+      status: "FAILED",
+      details: error.message,
+    });
     return { status: 500, error };
   }
 }
