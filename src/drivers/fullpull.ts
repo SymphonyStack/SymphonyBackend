@@ -53,6 +53,7 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
       console.log("Skipping build step ");
     }
     // Run npm start
+    console.log("DATA ARGS: ", data.args);
     const values = Object.values(data.args).map(value => `"${value}"`);
     const resStart = await exec(
       `${data.startup_script || "npm run dev"} -- ${values.join(" ")}`,
@@ -118,8 +119,8 @@ export async function runFlow(flow: Flow, job_id: string) {
             }
           }
         }
-        console.log("CONTEXT: ", context);
-        console.log("INPUT: ", input);
+        // console.log("CONTEXT: ", context);
+        // console.log("INPUT: ", input);
         console.log("BLOCK_PARAMS: ", block_params);
         if (flow.block_params[i].type == "transformer") {
           ordered_input = input;
@@ -130,7 +131,7 @@ export async function runFlow(flow: Flow, job_id: string) {
             }
           });
         }
-        console.log("ORDERED INPUT: ", ordered_input);
+        // console.log("ORDERED INPUT: ", ordered_input);
       }
       const data = {
         args: ordered_input,
