@@ -96,7 +96,9 @@ export async function runFlow(flow: Flow, job_id: string) {
       let input = {};
       if (inputs && i < inputs.length) {
         input = inputs[i];
-        if (context) {
+        if (inputs[i].type == "transformer") {
+          input = context;
+        } else if (context) {
           for (let key in input) {
             // Using context replace string keys between {{ and }} with values from context
             const matches = input[key].match(/{{(\w*\s*)*}}/g);
