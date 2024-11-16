@@ -47,9 +47,9 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
     const runRes = await exec(data.build_script || "npm run build");
     console.log(`npm run build output: ${runRes.stdout}`);
     // Run npm start
-    const values = Object.values(data.args);
+    const values = Object.values(data.args).map((value) => `"${value}"`);
     const resStart = await exec(
-      (data.startup_script || "npm run dev") + " " + values.join(" ")
+      `${data.startup_script || "npm run dev"} ${values.join(" ")}`
     );
     console.log(`npm start output: ${resStart.stdout}`);
     const modifiedOutput = resStart.stdout.substring(
@@ -107,7 +107,7 @@ export async function runFlow(flow: Flow, job_id: string) {
       };
       const output = await cloneAndRun(
         block_response.data[0].vcs_path,
-        input,
+        data,
         context
       );
       if (output.status != 200) {
