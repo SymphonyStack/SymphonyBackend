@@ -5,6 +5,7 @@ import path from "path";
 import fs from "fs/promises";
 import { Flow } from "models";
 import { getBlockService, updateJobStatusService } from "../services";
+import { forEach } from "lodash";
 
 const exec = promisify(execCallback);
 const git = simpleGit();
@@ -77,6 +78,19 @@ export async function runFlow(flow: Flow, job_id: string) {
     let context = {};
     for (let i = 0; i < block_sequence.length; i++) {
       const block_id = block_sequence[i];
+
+      const block_response = await getBlockService(block_id.toString());
+      if (block_response.status != 200 || block_response.data.length == 0) {
+        console.log(block_response);
+        return {
+          status: block_response.status,
+          data: "Something went wrong while fetching data",
+        };
+      }
+      console.log(block_response);
+
+      const block_params = block_response.data[0].params;
+
       let input = {};
       if (inputs && i < inputs.length) {
         input = inputs[i];
@@ -95,17 +109,13 @@ export async function runFlow(flow: Flow, job_id: string) {
             }
           }
         }
+        const ordered_input = {};
+        forEach(block_params.input, (param) => {
+          if (input[param.name]) {
+            ordered_input[param.name] = input[param.name];
+          }
+        });
       }
-
-      const block_response = await getBlockService(block_id.toString());
-      if (block_response.status != 200 || block_response.data.length == 0) {
-        console.log(block_response);
-        return {
-          status: block_response.status,
-          data: "Something went wrong while fetching data",
-        };
-      }
-      console.log(block_response);
       const data = {
         args: input,
         startup_script: block_response.data[0].startup_script,
