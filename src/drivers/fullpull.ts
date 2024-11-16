@@ -49,14 +49,14 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
     const runRes = await exec(data.build_script || "npm run build");
     console.log(`npm run build output: ${runRes.stdout}`);
     // Run npm start
-    const values = Object.values(data.args).map((value) => `"${value}"`);
+    const values = Object.values(data.args).map(value => `"${value}"`);
     const resStart = await exec(
-      `${data.startup_script || "npm run dev"} -- ${values.join(" ")}`
+      `${data.startup_script || "npm run dev"} -- ${values.join(" ")}`,
     );
     console.log(`npm start output: ${resStart.stdout}`);
     const modifiedOutput = resStart.stdout.substring(
       resStart.stdout.indexOf(DELIMITER) + 2,
-      resStart.stdout.lastIndexOf(DELIMITER)
+      resStart.stdout.lastIndexOf(DELIMITER),
     );
 
     //delete the folder
@@ -71,6 +71,7 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
 
 export async function runFlow(flow: Flow, job_id: string) {
   try {
+    updateJobStatusService(job_id, { flow_id: flow.id, status: "RUNNING" });
     const block_sequence = flow.block_sequence;
     // Default params for blocks
     let inputs = flow.block_params;
@@ -105,12 +106,12 @@ export async function runFlow(flow: Flow, job_id: string) {
             for (let temp of matches) {
               input[key] = input[key].replaceAll(
                 temp,
-                context[temp.substring(2, temp.length - 2)]
+                context[temp.substring(2, temp.length - 2)],
               );
             }
           }
         }
-        forEach(block_params.input, (param) => {
+        forEach(block_params.input, param => {
           if (input[param.name]) {
             ordered_input[param.name] = input[param.name];
           }
@@ -124,7 +125,7 @@ export async function runFlow(flow: Flow, job_id: string) {
       const output = await cloneAndRun(
         block_response.data[0].vcs_path,
         data,
-        context
+        context,
       );
       if (output.status != 200) {
         console.log(output);

@@ -4,7 +4,9 @@ export const JobStatusSchema = z.object({
   id: z.number(),
   flow_id: z.number(),
   created_at: z.string().optional(),
-  status: z.string().optional(),
+  status: z
+    .enum(["SUBMITTED", "PENDING", "RUNNING", "SUCCESS", "FAILED"])
+    .optional(),
   details: z.string().optional(),
 });
 
