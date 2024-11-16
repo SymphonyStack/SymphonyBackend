@@ -76,6 +76,7 @@ export async function runFlow(flow: Flow, job_id: string) {
     let inputs = flow.block_params;
     console.log("INPUTS:", inputs);
     let context = {};
+    let ordered_input = {};
     for (let i = 0; i < block_sequence.length; i++) {
       const block_id = block_sequence[i];
 
@@ -109,7 +110,6 @@ export async function runFlow(flow: Flow, job_id: string) {
             }
           }
         }
-        const ordered_input = {};
         forEach(block_params.input, (param) => {
           if (input[param.name]) {
             ordered_input[param.name] = input[param.name];
@@ -117,7 +117,7 @@ export async function runFlow(flow: Flow, job_id: string) {
         });
       }
       const data = {
-        args: input,
+        args: ordered_input,
         startup_script: block_response.data[0].startup_script,
         build_script: block_response.data[0].build_script,
       };
