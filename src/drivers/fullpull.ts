@@ -56,6 +56,10 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
       resStart.stdout.indexOf(DELIMITER) + 1,
       resStart.stdout.lastIndexOf(DELIMITER)
     );
+
+    //delete the folder
+    await fs.rm(localPath, { recursive: true, force: true });
+    console.log(`Removed directory: ${localPath}`);
     return { status: 200, message: modifiedOutput };
   } catch (error) {
     console.error(`Error: ${error}`);
@@ -118,7 +122,9 @@ export async function runFlow(flow: Flow, job_id: string) {
         };
       }
       // Output of the current block is the input to the next block
+      console.log("d", output);
       if (output.message) {
+        console.log("d", output.message);
         context = JSON.parse(output.message);
       } else {
         context = {};
@@ -132,6 +138,7 @@ export async function runFlow(flow: Flow, job_id: string) {
     };
   } catch (error) {
     console.error(`Error: ${error}`);
+    updateJobStatusService(job_id, { flow_id: flow.id, status: "FAILED" });
     return { status: 500, error };
   }
 }
