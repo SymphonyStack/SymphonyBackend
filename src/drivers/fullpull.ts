@@ -1,7 +1,7 @@
 import simpleGit from "simple-git";
 import { promisify } from "util";
 import { exec as execCallback } from "child_process";
-import path from "path";
+import path, { sep } from "path";
 import fs from "fs/promises";
 import { Flow } from "models";
 import { getBlockService, updateJobStatusService } from "../services";
@@ -18,7 +18,10 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
     console.log("STARTING CLONE: ", repoUrl);
     // Get the repo name from the URL
     const repoName = repoUrl?.split("/")?.pop()?.split(".")[0] as string;
-    const localPath = path.resolve(reposDir, repoName);
+    //add a random uuid in fronto of the folder to identify it
+    const random = Math.floor(Math.random() * 1000);
+    const repoNameWithRandom = `${random}_${repoName}`;
+    const localPath = path.resolve(reposDir, repoNameWithRandom);
     // Ensure the repos directory exists
     await fs.mkdir(reposDir, { recursive: true });
 
@@ -57,10 +60,12 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
       ? Object.values(data.args).map((value) => `"${value}"`)
       : [];
 
-    console.log("VALUES: ", values);
-    const command = `${data.startup_script || "npm run dev"} -- ${values.join(
-      " "
-    )}`;
+    // console.log("VALUES: ", values);
+    const startup_script = data.startup_script || "npm run dev";
+    const separator = startup_script.includes("--") ? "" : "--";
+    const command = `${
+      data.startup_script || "npm run dev"
+    } ${separator} ${values.join(" ")}`;
     console.log(`Executing command: ${command}`);
     const resStart = await exec(command);
     console.log(`npm start output: ${resStart.stdout}`);
