@@ -46,8 +46,12 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
     const resInstall = await exec("npm install --legacy-peer-deps");
     console.log(`npm install output: ${resInstall.stdout}`);
     // Run npm run build
-    const runRes = await exec(data.build_script || "npm run build");
-    console.log(`npm run build output: ${runRes.stdout}`);
+    if (data.build_script) {
+      const runRes = await exec(data.build_script);
+      console.log(`npm run build output: ${runRes.stdout}`);
+    } else {
+      console.log("Skipping build step ");
+    }
     // Run npm start
     const values = Object.values(data.args).map(value => `"${value}"`);
     const resStart = await exec(
