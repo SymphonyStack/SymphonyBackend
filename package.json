@@ -7,7 +7,8 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "compile": "tsc",
         "dev": "cross-env NODE_ENV=development nodemon -r dotenv/config src/index.ts",
-        "prod": "cross-env NODE_ENV=production nodemon -r dotenv/config src/index.ts"
+        "prod": "cross-env NODE_ENV=production nodemon -r dotenv/config src/index.ts",
+        "start": "npx tsx src/index.ts"
     },
     "keywords": [],
     "author": "",
