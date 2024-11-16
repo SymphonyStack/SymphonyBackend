@@ -13,73 +13,111 @@ const git = simpleGit();
 const reposDir = path.resolve(__dirname, "../../", "repos");
 const DELIMITER = process.env.DELIMITER ?? "";
 
+import os from "os";
+
+class CommandExecutor {
+  private sessionName: string;
+  private isWindows: boolean;
+
+  constructor(prefix: string = "symphony") {
+    this.sessionName = `${prefix}-${Date.now()}`;
+    this.isWindows = os.platform() === "win32";
+  }
+
+  async init(): Promise<void> {
+    if (!this.isWindows) {
+      await exec(`tmux new-session -d -s "${this.sessionName}"`);
+    }
+    // Windows doesn't need initialization
+  }
+
+  async sendCommand(command: string): Promise<string> {
+    if (this.isWindows) {
+      // On Windows, execute directly
+      const { stdout } = await exec(command);
+      return stdout;
+    } else {
+      // On Unix-like systems, use tmux
+      await exec(`tmux send-keys -t "${this.sessionName}" "${command}" Enter`);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const { stdout } = await exec(
+        `tmux capture-pane -t "${this.sessionName}" -p`
+      );
+      return stdout;
+    }
+  }
+
+  async cleanup(): Promise<void> {
+    if (!this.isWindows) {
+      try {
+        await exec(`tmux kill-session -t "${this.sessionName}"`);
+      } catch (error) {
+        console.error("Error cleaning up tmux session:", error);
+      }
+    }
+    // Windows doesn't need cleanup
+  }
+}
+
+// Update cloneAndRun to use CommandExecutor instead of TmuxManager
 export async function cloneAndRun(repoUrl: string, data: any, context: any) {
+  const executor = new CommandExecutor();
+
   try {
+    await executor.init();
+
+    // Rest of your cloneAndRun function remains the same, but use executor.sendCommand
+    // instead of direct exec calls
+
     console.log("STARTING CLONE: ", repoUrl);
-    // Get the repo name from the URL
     const repoName = repoUrl?.split("/")?.pop()?.split(".")[0] as string;
-    //add a random uuid in fronto of the folder to identify it
     const random = Math.floor(Math.random() * 1000);
     const repoNameWithRandom = `${random}_${repoName}`;
     const localPath = path.resolve(reposDir, repoNameWithRandom);
-    // Ensure the repos directory exists
+
     await fs.mkdir(reposDir, { recursive: true });
 
-    // Check if the directory exists
-    const dirExists = await fs
-      .access(localPath)
-      .then(() => true)
-      .catch(() => false);
-
-    if (dirExists) {
-      // If the directory exists, remove it
+    if (
+      await fs
+        .access(localPath)
+        .then(() => true)
+        .catch(() => false)
+    ) {
       await fs.rm(localPath, { recursive: true, force: true });
-      console.log(`Removed existing directory: ${localPath}`);
     }
 
-    // Clone the repository into the repos folder
     await git.clone(repoUrl, localPath);
-    console.log("Repository cloned successfully.");
 
     process.chdir(localPath);
 
     console.log("STARTING INSTALL");
-    console.log("DATA: ", data);
-    // Install dependencies
-    const resInstall = await exec("npm install --legacy-peer-deps");
-    console.log(`npm install output: ${resInstall.stdout}`);
-    // Run npm run build
+    await executor.sendCommand("npm install --legacy-peer-deps");
+
     if (data.build_script) {
-      const runRes = await exec(data.build_script);
-      console.log(`npm run build output: ${runRes.stdout}`);
-    } else {
-      console.log("Skipping build step ");
+      await executor.sendCommand(data.build_script);
     }
-    // Run npm start
+
     const values = data.args
       ? Object.values(data.args).map((value) => `"${value}"`)
       : [];
 
-    // console.log("VALUES: ", values);
     const startup_script = data.startup_script || "npm run dev";
     const separator = startup_script.includes("--") ? "" : "--";
-    const command = `${
-      data.startup_script || "npm run dev"
-    } ${separator} ${values.join(" ")}`;
-    console.log(`Executing command: ${command}`);
-    const resStart = await exec(command);
-    console.log(`npm start output: ${resStart.stdout}`);
-    const modifiedOutput = resStart.stdout.substring(
-      resStart.stdout.indexOf(DELIMITER) + 2,
-      resStart.stdout.lastIndexOf(DELIMITER)
-    );
-    console.log(`MOFIFIED_OUTPUT for ${repoName}: ${modifiedOutput}`);
+    const command = `${startup_script} ${separator} ${values.join(" ")}`;
 
-    //delete the folder
+    const output = await executor.sendCommand(command);
+
+    const modifiedOutput = output.substring(
+      output.indexOf(DELIMITER) + 2,
+      output.lastIndexOf(DELIMITER)
+    );
+
     await fs.rm(localPath, { recursive: true, force: true });
-    console.log(`Removed directory: ${localPath}`);
+    await executor.cleanup();
+
     return { status: 200, message: modifiedOutput };
   } catch (error) {
+    await executor.cleanup();
     console.error(`Error: ${error}`);
     return { status: 500, error };
   }
