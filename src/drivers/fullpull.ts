@@ -34,6 +34,8 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
       console.log(`Removed existing directory: ${localPath}`);
     }
 
+    const args: any[] = data.args;
+
     // Clone the repository into the repos folder
     await git.clone(repoUrl, localPath);
     console.log("Repository cloned successfully.");
@@ -42,13 +44,13 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
 
     console.log("STARTING INSTALL");
     // Install dependencies
-    const resInstall = await exec("npm install");
+    const resInstall = await exec("npm install --legacy-peer-deps");
     console.log(`npm install output: ${resInstall.stdout}`);
     // Run npm run build
-    const runRes = await exec("npm run build");
+    const runRes = await exec(`${data.build_script || "echo no build script"}`);
     console.log(`npm run build output: ${runRes.stdout}`);
-    // Run npm start
-    const resStart = await exec("npm start");
+    // Run npm start if args exist add them to the command
+    const resStart = await exec(data.startup_script + args.join(" "));
     console.log(`npm start output: ${resStart.stdout}`);
     const mySubString = resStart.stdout.substring(
       resStart.stdout.indexOf(DELIMITER) + 1,
@@ -93,7 +95,7 @@ export async function runFlow(flow: Flow, job_id: string) {
       const output = await cloneAndRun(
         block_response.data[0].vcs_path,
         input,
-        context,
+        context
       );
       if (output.status != 200) {
         console.log(output);

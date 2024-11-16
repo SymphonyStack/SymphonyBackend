@@ -33,7 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: "*",
-  }),
+  })
 );
 
 // ========================================
@@ -65,6 +65,25 @@ app.use("/execute", executeRouter);
 // ========================================
 //              start server
 // ========================================
+
+import { cloneAndRun } from "./drivers/fullpull";
+app.get("/driver", async (req, res) => {
+  const repoUrl = "https://github.com/SymphonyStack/TestBlock2.git";
+  const context = {};
+  const data = {
+    args: [
+      "MyToken",
+      "MTK",
+      "1000000000000",
+      "0xce869b68ed0d21f201bc87ff268e18ba7c485f61bae5c5721e7f4cd6c3af9e13",
+    ],
+    startup_script:
+      "npx hardhat compile && npx hardhat deploy --network mumbai ",
+  };
+  const response = await cloneAndRun(repoUrl, data, context);
+  console.log("Edge function response:", response);
+  return res.status(500).send({ message: "Error executing edge function" });
+});
 
 const port = process.env.PORT || 8081;
 
