@@ -40,6 +40,7 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
     process.chdir(localPath);
 
     console.log("STARTING INSTALL");
+    console.log("DATA: ", data);
     // Install dependencies
     const resInstall = await exec("npm install --legacy-peer-deps");
     console.log(`npm install output: ${resInstall.stdout}`);
