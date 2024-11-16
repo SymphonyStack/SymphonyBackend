@@ -133,18 +133,20 @@ export async function runFlow(flow: Flow, job_id: string) {
           ordered_input = input;
         } else {
           forEach(block_params.input, (param) => {
+            // console.log("PARAM NAME: ", param.name);
             if (input[param.name]) {
               ordered_input[param.name] = input[param.name];
             }
           });
         }
-        // console.log("ORDERED INPUT: ", ordered_input);
+        console.log("ORDERED INPUT: ", ordered_input);
       }
       const data = {
         args: ordered_input,
         startup_script: block_response.data[0].startup_script,
         build_script: block_response.data[0].build_script,
       };
+      ordered_input = {};
       const output = await cloneAndRun(
         block_response.data[0].vcs_path,
         data,
