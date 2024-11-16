@@ -2,6 +2,7 @@ import { Result, JobStatus, createJobStatus } from "../../models";
 import {
   createJobStatusService,
   getJobByStatusService,
+  getJobStatusByFlowIdService,
   getJobStatusService,
   updateJobStatusService,
 } from "../../services";
@@ -41,6 +42,28 @@ export const getJobStatusController = async (
     // }
 
     return await getJobStatusService(jobStatus_id);
+  } catch (e: any) {
+    return { status: 400, data: e };
+  }
+};
+
+export const getJobStatusByFlowIdController = async (
+  req: Request,
+): Promise<Result<JobStatus[] | string>> => {
+  try {
+    const flow_id: string = req.params?.flow_id;
+    if (!flow_id || flow_id.length == 0 || isNaN(+flow_id)) {
+      throw Error("No/Invalid flow_id found. flow_id:" + flow_id);
+    }
+
+    // TODO: check if auth needed for getting JobStatus
+    // const typeOfAuthorization = req.headers.authorization?.split(" ")[0];
+    // const accessToken = req.headers.authorization?.split(" ")[1];
+    // if (!(typeOfAuthorization && accessToken)) {
+    //   return { status: 400, data: "No access token found" };
+    // }
+
+    return await getJobStatusByFlowIdService(flow_id);
   } catch (e: any) {
     return { status: 400, data: e };
   }

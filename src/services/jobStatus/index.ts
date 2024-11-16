@@ -15,6 +15,13 @@ export const getJobStatusService = async (
   return { status: response.status, data: response.data };
 };
 
+export const getJobStatusByFlowIdService = async (
+  flow_id: string,
+): Promise<Result<JobStatus[]>> => {
+  const response = await useJobStatusDbClient.findByFlowId(flow_id);
+  return { status: response.status, data: response.data };
+};
+
 export const getJobByStatusService = async (
   status: string,
 ): Promise<Result<JobStatus[]>> => {
