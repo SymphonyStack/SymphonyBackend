@@ -132,7 +132,8 @@ export async function runFlow(flow: Flow, job_id: string) {
         updateJobStatusService(job_id, {
           flow_id: flow.id,
           status: "FAILED",
-          details: output.message,
+          // @ts-ignore
+          details: output.message + output.error,
         });
         return {
           status: output.status,
