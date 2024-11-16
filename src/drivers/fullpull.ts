@@ -79,7 +79,7 @@ export async function runFlow(flow: Flow, job_id: string) {
       const block_id = block_sequence[i];
       let input = {};
       if (inputs && i < inputs.length) {
-        input = inputs[i].params;
+        input = inputs[i];
         if (context) {
           for (let key in input) {
             // Using context replace string keys between {{ and }} with values from context
@@ -94,8 +94,6 @@ export async function runFlow(flow: Flow, job_id: string) {
               );
             }
           }
-        } else {
-          input = inputs[i];
         }
       }
 
