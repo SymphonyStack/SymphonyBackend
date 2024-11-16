@@ -51,7 +51,6 @@ export const getFlowsByCreatorController = async (
 ): Promise<Result<Flow[] | string>> => {
   try {
     const created_by: string = req.params?.created_by;
-    console.log(created_by);
     if (!created_by || created_by.length == 0) {
       throw Error("No/Invalid created_by found. created_by:" + created_by);
     }
@@ -61,7 +60,6 @@ export const getFlowsByCreatorController = async (
     // if (!(typeOfAuthorization && accessToken)) {
     //   return { status: 400, data: "No access token found" };
     // }
-    console.log(created_by);
     return await getFlowByCreatorService(created_by);
   } catch (e: any) {
     return { status: 400, data: e };

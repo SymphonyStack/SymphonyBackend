@@ -25,7 +25,7 @@ export const createBlock = (block: Block) => {
     location: block.location,
     vcs_path: block.vcs_path,
     params: block.params,
-    startup_script: z.string().optional(),
-    build_script: z.string().optional(),
+    startup_script: block.startup_script,
+    build_script: block.build_script,
   });
 };

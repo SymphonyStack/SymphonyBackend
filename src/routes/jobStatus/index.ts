@@ -13,7 +13,10 @@ import {
 jobStatusRouter.post("/", makeCallback(createJobStatusController));
 
 jobStatusRouter.get("/:id", makeCallback(getJobStatusController));
-jobStatusRouter.get("/flow/:id", makeCallback(getJobStatusByFlowIdController));
+jobStatusRouter.get(
+  "/flow/:flow_id",
+  makeCallback(getJobStatusByFlowIdController),
+);
 
 jobStatusRouter.get(
   "/status/:status",
