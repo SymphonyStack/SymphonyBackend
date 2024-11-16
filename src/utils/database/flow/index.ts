@@ -2,7 +2,7 @@ import { Flow, Result } from "../../../models";
 
 export const useFlowDb = (getDbClient: Function) => {
   async function insertFlow(
-    flow: Pick<Flow, Exclude<keyof Flow, "id">>,
+    flow: Pick<Flow, Exclude<keyof Flow, "id">>
   ): Promise<Result<Flow[]>> {
     try {
       const clientInstance = await getDbClient();
@@ -66,7 +66,7 @@ export const useFlowDb = (getDbClient: Function) => {
 
   async function updateFlow(
     id: string,
-    flow: Pick<Flow, Exclude<keyof Flow, "id">>,
+    flow: Pick<Flow, Exclude<keyof Flow, "id">>
   ): Promise<Result<Flow[]>> {
     try {
       const clientInstance = await getDbClient();
