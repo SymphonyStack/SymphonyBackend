@@ -55,9 +55,7 @@ export async function cloneAndRun(repoUrl: string, data: any, context: any) {
     // Run npm start
     console.log("DATA ARGS TYPE: ", typeof data.args);
     console.log("DATA ARGS: ", data.args);
-    const values = Object.values(data.args).map((value) => {
-      return `"${value}"`;
-    });
+    const values = Object.values(data.args).map((value) => `"${value}"`);
     const resStart = await exec(
       `${data.startup_script || "npm run dev"} -- ${values.join(" ")}`
     );
@@ -106,7 +104,7 @@ export async function runFlow(flow: Flow, job_id: string) {
       if (inputs && i < inputs.length) {
         input = inputs[i];
         if (inputs[i].type == "transformer") {
-          input = JSON.stringify(context);
+          input = context;
         } else if (context) {
           for (let key in input) {
             // Using context replace string keys between {{ and }} with values from context
