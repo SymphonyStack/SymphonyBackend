@@ -14,7 +14,7 @@ const DELIMITER = process.env.DELIMITER ?? "";
 
 export async function cloneAndRun(repoUrl: string, data: any, context: any) {
   try {
-    console.log("STARTING CLONE");
+    console.log("STARTING CLONE: ", repoUrl);
     // Get the repo name from the URL
     const repoName = repoUrl?.split("/")?.pop()?.split(".")[0] as string;
     const localPath = path.resolve(reposDir, repoName);
