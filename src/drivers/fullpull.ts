@@ -101,7 +101,7 @@ export async function runFlow(flow: Flow, job_id: string) {
       if (inputs && i < inputs.length) {
         input = inputs[i];
         if (inputs[i].type == "transformer") {
-          input = context;
+          input = JSON.stringify(context);
         } else if (context) {
           for (let key in input) {
             // Using context replace string keys between {{ and }} with values from context
