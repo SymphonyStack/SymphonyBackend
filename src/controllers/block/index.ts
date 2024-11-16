@@ -15,7 +15,7 @@ export const createBlockController = async (
 ): Promise<Result<Block[] | string>> => {
   try {
     let input = req.body;
-    const block = createBlock(input) as Block;
+    const block = createBlock(input);
     return await createBlockService(block);
   } catch (e: any) {
     return { status: 400, data: e };

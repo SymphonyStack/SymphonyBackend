@@ -36,6 +36,23 @@ export const useJobStatusDb = (getDbClient: Function) => {
     }
   }
 
+  async function findByFlowId(flow_id: string): Promise<Result<JobStatus[]>> {
+    try {
+      const clientInstance = await getDbClient();
+
+      const response = await clientInstance
+        .from("JobStatus")
+        .select()
+        .match({ flow_id: flow_id });
+      if (response.error) {
+        return { status: response.status, data: response.error.message };
+      }
+      return response;
+    } catch (e: any) {
+      return { status: 400, data: e.message };
+    }
+  }
+
   async function findByStatus(status: string): Promise<Result<JobStatus[]>> {
     try {
       const clientInstance = await getDbClient();
@@ -77,6 +94,7 @@ export const useJobStatusDb = (getDbClient: Function) => {
     insertJobStatus,
     updateJobStatus,
     findById,
+    findByFlowId,
     findByStatus,
   });
 };
