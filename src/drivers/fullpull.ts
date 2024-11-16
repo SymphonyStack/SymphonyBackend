@@ -73,6 +73,7 @@ export async function runFlow(flow: Flow, job_id: string) {
     const block_sequence = flow.block_sequence;
     // Default params for blocks
     let inputs = flow.block_params;
+    console.log("INPUTS:", inputs);
     let context = {};
     for (let i = 0; i < block_sequence.length; i++) {
       const block_id = block_sequence[i];
@@ -117,6 +118,7 @@ export async function runFlow(flow: Flow, job_id: string) {
       );
       if (output.status != 200) {
         console.log(output);
+        updateJobStatusService(job_id, { flow_id: flow.id, status: "FAILED" });
         return {
           status: output.status,
           data: "Something went wrong while cloning and running.",
